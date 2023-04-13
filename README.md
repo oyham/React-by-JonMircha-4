@@ -95,3 +95,58 @@ index.css:
 }
 ```
 ---
+# 77. Context API. Haciendo una APP MultiIDIOMA SIN Context.
+Creamos la vde language con su estado inicial en "es". Luego creamos un objeto 'translations' con las props *es* y *en*, teniendo cada una los textos que querramos mostrar tanto en español como en ingles. También necesitaremos una vde texts que es la que se encargará de almacenar los textos respectivamente, con su estado inicial ``translations[language]``. Pasaremos como *prop* la vde _*texts*_ al Header, Main y Footer.
+
+Para el manejo del cambio de idioma necesitamos un manejador de eventos `handleLanguage` y lo enviaremos como *prop* al encargado de desencadenar dicho *e*, el Header, a través de un 'onChange' en el *select*. Destructuramos *texts y handleLanguage*. 
+
+Terminaremos de destructurar la prop texts en Main, y Footer y comenzaremos por reemplazar los textos por cada una de las props de nuestro objeto translations con `{texts.}` y su respectiva prop.
+
+Para la programación del handleLanguage es muy similar al handleTheme. Nos preguntaremos si el valor del *e* es igual a la palabra "en" siendo esta la que se encuentra en el option del select. Si es así ejectuamos el ``setLanguage("en")`` y también el seteo del texto con `setTexts(translation.en)`. Y en caso contrario, lo mismo pero con `es`.
+```js
+const initialLanguage = "es"
+
+const translations = {
+    es: {
+        headerTitle: "Mi aplicacion SIN Context Api",
+        ...
+    },
+    en: {
+        headerTitle: "My application WITHOUT Context Api",
+        ...
+    },
+}
+
+const MyPage = () => {
+    const [theme, setTheme] = useState(initialTheme)
+    const [language, setLanguage] = useState(initialLanguage)
+    const [texts, setTexts] = useState(translations[language])
+    ...
+const handleLanguage = (e) =>{
+        if(e.target.value === "en"){
+            setLanguage("en")
+            setTexts(translations.en)
+        } else {
+            setLanguage(initialLanguage)
+            setTexts(translations.es)
+        }
+    }
+    ...
+return (
+        <div className='my-page'>
+            <Header theme={theme} texts={texts} handleTheme={handleTheme} handleLanguage={handleLanguage}/>
+            <Main theme={theme} texts={texts}/>
+            <Footer theme={theme} texts={texts}/>
+...
+```
+```js
+const Header = ({theme, handleTheme, texts, handleLanguage}) => {
+    return (
+        <header className={theme}>
+            <h2>{texts.headerTitle}</h2>
+            <h3>{texts.headerSubtitle}</h3>
+            <select name="language" onChange={handleLanguage}>
+            ...
+```
+---
+
