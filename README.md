@@ -149,4 +149,43 @@ const Header = ({theme, handleTheme, texts, handleLanguage}) => {
             ...
 ```
 ---
+# 78. Context API. Haciendo una APP con SESIÓN de Usuario SIN CONTEXT
+Crearemos una vde auth con su estado inicial es *null*. Crearemos el manejador de eventos para controlar el estado de nuestra variable y la pasamos como *prop* a nuestro Header. El Main recibirá como *prop* a `auth` para saber que texto mostrar, si el de invitado o usuario, y para el Footer no posee texto privado, asi que no necesita la autenticación. 
 
+En el Main crearemos un conditional render diciendo que si auth es verdadero se muestre un texto u el otro. Lo mismo con el botón de nuestro Header de iniciar y cerrar sesión. Este mismo manejara el `handleAuth` en su *onClick*.
+MyPage:
+```js
+const initialAuth = null
+...
+const [auth, setAuth] = useState(initialAuth)
+...
+    //Mis handleAuth
+    const handleAuth = () => (!auth ? setAuth(!initialAuth) : setAuth(initialAuth))
+    const handleAuth2 = () => (!auth ? setAuth(true) : setAuth(initialAuth))
+
+
+    //El de Jon
+    const handleAuth3 = (e) => {
+        if(auth){
+            setAuth(null)
+        } else {
+            setAuth(true)
+        }
+    }
+    ...
+``` 
+Header:
+```js
+const Header = ({ ... auth, handleAuth }) => {
+    ...
+     <button onClick={handleAuth}>{auth ? texts.buttonLogout : texts.buttonLogin}</button>
+    ...
+``` 
+Main:
+```js
+const Main = ({ theme, texts, auth }) => {
+    return (
+        <main className={theme}>
+            {auth ? <p>{texts.mainHello}</p> : <p>{texts.mainWelcome}</p>}
+            ...
+``` 

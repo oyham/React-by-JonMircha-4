@@ -5,6 +5,7 @@ import Footer from './Footer'
 
 const initialTheme = "light"
 const initialLanguage = "es"
+const initialAuth = null
 
 const translations = {
     es: {
@@ -26,7 +27,7 @@ const translations = {
         headerDark: "Dark",
         buttonLogin: "Login",
         buttonLogout: "Close Session",
-        mainWelcome: "Welcome",
+        mainWelcome: "Welcome Guest",
         mainHello: "Hello user",
         mainContent: "My main content",
         footerTitle: "My footer"
@@ -38,6 +39,7 @@ const MyPage = () => {
     const [theme, setTheme] = useState(initialTheme)
     const [language, setLanguage] = useState(initialLanguage)
     const [texts, setTexts] = useState(translations[language])
+    const [auth, setAuth] = useState(initialAuth)
 
     const handleTheme = (e) => {
         console.log(e.target.value)
@@ -48,8 +50,8 @@ const MyPage = () => {
         }
     }
 
-    const handleLanguage = (e) =>{
-        if(e.target.value === "en"){
+    const handleLanguage = (e) => {
+        if (e.target.value === "en") {
             setLanguage("en")
             setTexts(translations.en)
         } else {
@@ -58,11 +60,29 @@ const MyPage = () => {
         }
     }
 
+    //Mis handleAuth
+    const handleAuth = () => (!auth ? setAuth(!initialAuth) : setAuth(initialAuth))
+    const handleAuth2 = () => (!auth ? setAuth(true) : setAuth(initialAuth))
+
+
+    //El de Jon
+    const handleAuth3 = (e) => {
+        if(auth){
+            setAuth(null)
+        } else {
+            setAuth(true)
+        }
+    }
+
     return (
         <div className='my-page'>
-            <Header theme={theme} texts={texts} handleTheme={handleTheme} handleLanguage={handleLanguage}/>
-            <Main theme={theme} texts={texts}/>
-            <Footer theme={theme} texts={texts}/>
+            <Header theme={theme} texts={texts} auth={auth}
+                handleTheme={handleTheme}
+                handleLanguage={handleLanguage}
+                handleAuth={handleAuth}
+            />
+            <Main theme={theme} texts={texts} auth={auth} />
+            <Footer theme={theme} texts={texts} />
         </div>
     )
 }
