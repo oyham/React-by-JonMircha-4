@@ -189,3 +189,76 @@ const Main = ({ theme, texts, auth }) => {
             {auth ? <p>{texts.mainHello}</p> : <p>{texts.mainWelcome}</p>}
             ...
 ``` 
+---
+# 79. Context API. Haciendo una APP con THEME Dark/Light CON Context
+Duplicamos todos los componentes y mandamos a llamar a App. Creamos la carpeta contexto y por cada funcionalidad global que tengamos en la App, creemos un archivo.jsx independiente. 
+`ThemeContext` no se crea con rafce, sinó que creamos la const y la igualamos a la palabra reservada createContext(), esta hará la autoimportación de 'react'. Internamente el contexto tiene dos objetos, un proveedor (un wrapper), y un "consumer", otro mecanismo que nos va a permitir consumir esos valores que dá el proveedor.
+
+Hay personas que crean el archivo del contexto, y otro archivo para el provider. Nosotros crearemos el proveedor en el contexto, y para el "consumer" podríamos crear un objeto para poderlo consumir, pero desde que existen los Hooks, tenemos useContext que viene a reemplazar el 'consumer'.
+
+Recordemos que todos los componentes en React reciben la *prop* `children` por defecto, haciendo referencia a los componentes que internamente tienen más contenido. La estructura es similar a React-router, envolviendo los componentes.
+
+Destructuramos la prop *children* en nuestro ThemeProvider. Internamente nuestro jsx retornará ThemeContext.Provider, envolviendo los hijos que necesiten los valores que este contexto tenga. Cada valor que queramos compartir de manera global lo podemos ir definiendo como props en `<ThemeContext.Provier ...>`, pero se sugiere que previamente poseamos un objeto fuera del retorno, y cada prop del objeto sería un valor global.
+
+Comenzamos con el ThemeDark/Light. Cortamos y pegamos la vde, el initialState y el manejador de dicha funcionalidad a nuestro ThemeContext. Luego en nuestra *data* que enviaremos como prop a nuestro *.Provider* le pasamos la vde *theme* y el manejador *handleTheme*. Con esto nuestra App ya renderiza correctamente pero aún falta algo más para que funcione... Si revisamos nuestros componentes, veremos que la vde theme que pasabamos como prop ya no se entrelaza (por asi decirlo) correctamente, lógico. Para que funcione theme en cada uno de nuestros componentes, debemos de hacer uso del `useContext`, snippet en lo posible. El snippet nos propone crear una const con 'nombre' pero podemos hacer uso de la destructuración que envía el ThemeProvider a través del *value={data}*, y de dónde proviene esa *data*? De la ``const ThemeContext = createContext()`` que creamos previamente. Luego de esto podemos eliminar las prop que recibe HeaderTheme que utilizaba antes (theme, handleTheme).
+
+Hacemos lo mismo con los demás componentes, sin olvidar la importación del useContext, destructurando sólo {theme}, y eliminando cómo prop *theme*.
+
+ThemeContext.jsx:
+```js
+import { createContext, useState } from "react";
+
+const ThemeContext = createContext();
+
+const initialTheme = "light"
+
+const ThemeProvider = ({children}) =>{
+    const [theme, setTheme] = useState(initialTheme)
+    
+    const handleTheme = (e) => {
+        console.log(e.target.value)
+        if (e.target.value === 'dark') {
+            setTheme('dark')
+        } else {
+            setTheme(initialTheme)
+        }
+    }
+    
+    const data = {theme, handleTheme}
+
+    return(
+        <ThemeContext.Provider value={data}>{children}</ThemeContext.Provider>
+    )
+}
+
+export {ThemeProvider}
+export default ThemeContext
+```
+MyPageContext.jsx:
+```js
+        <div className='my-page'>
+            <ThemeProvider>
+                <HeaderContext  texts={texts} auth={auth}
+                    handleLanguage={handleLanguage}
+                    handleAuth={handleAuth}
+                />
+                <MainContext texts={texts} auth={auth} />
+                <FooterContext texts={texts} />
+            </ThemeProvider>
+        </div>
+```
+Header, Main, Footer:
+```js
+import React, { useContext } from 'react'
+import ThemeContext from '../context/ThemeContext'
+
+const HeaderContext = ({ texts, handleLanguage, auth, handleAuth }) => {
+    const {theme, handleTheme} = useContext(ThemeContext)
+
+const MainContext = ({ texts, auth }) => {
+    const { theme } = useContext(ThemeContext)
+
+const FooterContext = ({ texts }) => {
+    const { theme } = useContext(ThemeContext)
+```
+---
