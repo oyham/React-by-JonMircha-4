@@ -297,4 +297,24 @@ export { AuthProvider };
 export default AuthContext;
 ```
 ---
-# 81. Context API.
+# 81. Context API. Haciendo una APP con SESIÓN de USUARIO CON Context
+Jon utilizo `<AuthProvider>` para envolver a los demás componentes, a diferencia de mi que sólo envolví el Header y el Main.
+
+```js
+const MyPageContext = () => {
+    return (
+        <div className='my-page'>
+            <ThemeProvider>
+                <LanguageProvider>
+                    <AuthProvider>
+                        <HeaderContext />
+                        <MainContext />
+                    </AuthProvider>
+                    <FooterContext />
+                </LanguageProvider>
+            </ThemeProvider>
+        </div>
+    )
+}
+```
+---
