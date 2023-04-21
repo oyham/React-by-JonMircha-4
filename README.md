@@ -318,3 +318,20 @@ const MyPageContext = () => {
 }
 ```
 ---
+# 82. CRUD API con Context (1/2)
+Según Jon, no se pueden consumir en un mismo archivo el Contexto y el Proveedor. En el CrudApi importé Context y Provider y por ahora no marcó ningún error. Veremos cómo sigue. Jon dice que debemos de importar el Providedr a `App.jsx` y envolver el componente `CrudApi.jsx`.
+
+---
+# 83. CRUD API con Context (2/2)
+Yo comencé creando un `CrudFormContext.jsx` pero Jon directamenté utilizó la data del CrudContext para pasar las props al CrudForm y eliminar las props que pasamamos a través del CrudApi.
+
+En CrudTable originalmente se destructuraban 3 props, 1 data, que se utilizaba para realizar el mapeo, y las otras dos se pasaban cómo props hacia el CrudTableRow. Yo originalmente destructure data del CrudContext y las otras dos props las destructuré de igual manera directamente en CrudTableRow. Al darme cuenta que data nunca se recibia ya que lo que enviamos del CrudContext era la prop "db", cambié data por db y cree una variable data igualada a db. Jon en cambio realizó la destructuración de las 3 props cómo venian antes y en cambio igualo db: data, esto es llamado "asignación de alias" o "renombramiento de propiedades".
+
+Luego de eliminar el  paso de props viejas y dejar todo "ok" a Jon le aparece un error 'TypeError: Cannot destructure property "db" of "Object(...)(...)" as it is undefined.
+---
+
+La regla de que en un mismo archivo no podemos utilizar el provider y el consumer... Pense que por eso no me aparecia la tabla con los caballeros entonces utilicé el Provider en `App.jsx` envolviendo asi `CrudApi` pero siguió todo cómo estaba. Cabe aclarar que a mí no me saltó ningún error luego de dejar todo "ok". Después de que Jon realizara el cambio del Proveedor, le renderizó todo okey y le apareció el formulario con la tabla. A mi, en este punto, solo me aparece el formulario, sin ningún error, sólo que no me aparece la tabla.
+
+El error se encontraba en que para destructurar las prop estaba utilizando createContext en vez de useContext. 
+
+Aunque hoy no me saltaba error por estar utilizando el provider en el mismo archivo donde utilizaba el contexto en `CrudApi` ahora me saltaba un error... asi que cambie el prover de mi CrudApi a `App.jsx` directamente.
